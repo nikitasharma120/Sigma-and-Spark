@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException #for error handling 
 import sqlite3 #db connectt
-from typing import List, Dict #structure mention is must 
+from typing import List, Dict #structure mention
+import json
 
 app = FastAPI(title="Faculty API", description="Serve faculty data")
 
@@ -12,7 +13,7 @@ DATABASE = os.path.join(BASE_DIR, "3. Storage", "faculty.db")
 def get_connection():
     try:
         conn = sqlite3.connect(DATABASE)
-        conn.row_factory = sqlite3.Row
+        conn.row_factory = sqlite3.Row #row for dicts
         return conn
     except sqlite3.Error as e:
         raise HTTPException(status_code=500, detail=f"Db connection failed: {e}")
@@ -67,4 +68,7 @@ def get_faculty():
     data = fetch_all_faculty()
     if not data:
         raise HTTPException(status_code=404, detail="No faculty data found, handle your code better!")
+
+    output_path = os.path.join(BASE_DIR, "faculty_output.json") 
+    with open(output_path, "w", encoding="utf-8") as f: json.dump(data, f, indent=2, ensure_ascii=False) 
     return data
