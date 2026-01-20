@@ -28,11 +28,8 @@ Sigma-and-Spark/
 │
 ├── 4. Serving/
 │   ├── app.py
-│   ├── llm.md
-│
-├── Data/
-│   ├── faculty_profiles.json
-│   ├── faculty_cleaned.json
+│   ├── logs/
+│   │   └── llm_usage.md
 │
 ├── requirements.txt
 └── README.md
