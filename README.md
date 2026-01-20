@@ -3,14 +3,14 @@
 ## Project Summary:
 
 This project implements an **end-to-end data engineering pipeline** to crawl, clean, store, and serve faculty information from DAIICT university website. The final objective is to prepare a **clean, structured dataset** that can later be used for **semantic search and NLP applications**.
-All file paths are resolved dynamically relative to project root to ensure portability across machines and collaborators.
+All file paths are dynamic relative to project to ensure flexibility to collaborators.
 ---
 
 
 ## Folder Structure
 
 ```
-project-root/
+Sigma-and-Spark/
 │
 ├── 1. Ingestion/
 │   ├── scraper.py
@@ -28,6 +28,7 @@ project-root/
 │
 ├── 4. Serving/
 │   ├── app.py
+│   ├── llm.md
 │
 ├── Data/
 │   ├── faculty_profiles.json
@@ -169,25 +170,25 @@ pip install -r requirements.txt
 ### 2. Run Scraper
 
 ```
-python 1.\ Ingestion/scraper.py
+python "1. Ingestion/scraper.py"
 ```
 
 ### 3. Run Cleaner
 
 ```
-python 2.\ Transformation/cleaner.py
+python "2. Transformation/cleaner.py"
 ```
 
 ### 4. Load Data into SQLite
 
 ```
-python 3.\ Storage/load_sqlite.py
+python "3. Storage/load_sqlite.py"
 ```
 
 ### 5. Start API Server
 
 ```
-uvicorn 4.\ Serving/app:app --reload
+uvicorn --reload --app-dir "4.Serving" app:app
 ```
 
 Visit:
@@ -209,6 +210,7 @@ http://127.0.0.1:8000/faculty
 
 
 Built by **Sigma & Spark**: where B.Sc. Statistics meets Leveled Sparks 
+
 Srishti Lamba: 202518003 
 *Catching quirks which others miss*
 
