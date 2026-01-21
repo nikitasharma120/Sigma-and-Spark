@@ -3,7 +3,7 @@
 ## Project Summary:
 
 This project implements an **end-to-end data engineering pipeline** to crawl, clean, store, and serve faculty information from DAIICT university website. The final objective is to prepare a **clean, structured dataset** that can later be used for **semantic search and NLP applications**.
-All file paths are dynamic relative to project to ensure flexibility to collaborators.
+All file paths are dynamic to project to ensure flexibility to collaborators.
 ---
 
 
@@ -30,7 +30,7 @@ Sigma-and-Spark/
 │   ├── app.py
 │   ├── logs/
 │   │   └── llm_usage.md
-│
+├── pipeline.py
 ├── requirements.txt
 └── README.md
 ```
@@ -61,10 +61,6 @@ Sigma-and-Spark/
 * Contact details (email, phone, address)
 * Profile URL
 
-**Output:**
-
-* `faculty_profiles.json`
-
 **Error Handling:**
 
 * Handles broken links and failed requests
@@ -78,22 +74,14 @@ Sigma-and-Spark/
 **Responsibility:**
 
 * Clean messy scraped JSON data
-* Normalize missing, null, or malformed fields
-* Remove HTML noise and placeholder text
+* Normalize missing and null fields
+* Remove HTML noise
 
 **Rules:**
 
 * Replaces empty or invalid fields with `"Not Available"`
 * Standardizes contact information
 * Ensures lists exist for teaching and publications
-
-**Input:**
-
-* `faculty_profiles.json`
-
-**Output:**
-
-* `faculty_cleaned.json`
 
 ---
 
@@ -144,54 +132,37 @@ Sigma-and-Spark/
 **Responsibility:**
 
 * Show faculty data via REST API
-* Serve structured JSON for downstream NLP and embedding tasks
-
-**Visible at:**
-
-```
-GET /faculty
-```
-
+* JSON for downstream NLP and embedding tasks
 * Returns all faculty records with contact, teaching, and publication data
 
 ---
 
 ## How to Run the Pipeline
 
-### 1. Install Dependencies
+### 1. Clone the repository:
 
 ```
-pip install -r requirements.txt
+```bash
+git clone https://github.com/<username>/Sigma-and-Spark.git
+cd Sigma-and-Spark
 ```
 
-### 2. Run Scraper
+### 2. Run the pipeline:
 
 ```
-python "1. Ingestion/scraper.py"
+python pipeline.py
 ```
 
-### 3. Run Cleaner
-
-```
-python "2. Transformation/cleaner.py"
-```
-
-### 4. Load Data into SQLite
-
-```
-python "3. Storage/load_sqlite.py"
-```
-
-### 5. Start API Server
-
-```
-uvicorn --reload --app-dir "4.Serving" app:app
-```
-
-Visit:
+### 3. Access application on:
 
 ```
 http://127.0.0.1:8000/faculty
+```
+
+### NOTE: [Install Dependencies if not]
+
+```
+pip install -r requirements.txt
 ```
 
 ---
