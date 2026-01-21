@@ -2,9 +2,13 @@ import sqlite3
 import json
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_FILE = os.path.join(BASE_DIR, "Data", "faculty_cleaned.json")
-DB_PATH = os.path.join(BASE_DIR, "3. Storage", "faculty.db")
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..")
+)
+
+DATA_FILE = os.path.join(PROJECT_ROOT, "faculty_cleaned.json")
+DB_PATH = os.path.join(PROJECT_ROOT, "3. Storage", "faculty.db")
+
 
 def load_faculty_data(file_path):
     try:

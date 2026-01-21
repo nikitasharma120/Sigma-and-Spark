@@ -1,13 +1,18 @@
 import requests
 import json
 import logging
+import os
 from bs4 import BeautifulSoup, NavigableString
 from datetime import datetime
 from typing import List, Dict, Set, Optional
 
 # ---------------- CONFIG ---------------- #
 
-OUTPUT_FILE = "faculty_profiles.json"
+PROJECT_ROOT = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..")
+)
+
+OUTPUT_FILE = os.path.join(PROJECT_ROOT, "faculty_profiles.json")
 TIMEOUT = 20
 
 LISTING_PAGES = [
