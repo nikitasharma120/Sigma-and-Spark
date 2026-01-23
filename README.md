@@ -43,23 +43,10 @@ Sigma-and-Spark/
 
 ### 1. Ingestion: (The Scraper)
 
-**Responsibility:**
+Crawls faculty listing + profile pages
 
-* Crawl multiple faculty listing pages
-* Visit individual faculty profile pages
-* Extract raw, unstructured data
+Extracts raw data: name, type, bio, education, specialization, teaching subjects, publications, contact info, profile URL
 
-**Data Extracted:**
-
-* Name
-* Faculty type
-* Biography
-* Education
-* Specialization
-* Teaching subjects
-* Publications
-* Contact details (email, phone, address)
-* Profile URL
 
 **Error Handling:**
 
@@ -71,26 +58,19 @@ Sigma-and-Spark/
 
 ### 2. Transformation: (The Cleaner)
 
-**Responsibility:**
+Clean and normalizes JSON data
 
-* Clean messy scraped JSON data
-* Normalize missing and null fields
-* Remove HTML noise
+Rules:
 
-**Rules:**
+Replace missing/invalid fields → "Not Available"
 
-* Replaces empty or invalid fields with `"Not Available"`
-* Standardizes contact information
-* Ensures lists exist for teaching and publications
+Standardize contact info
+
+Ensure lists exist for teaching & publications
 
 ---
 
 ### 3. Storage: (The Structured Home)
-
-**Responsibility:**
-
-* Design and create a relational SQLite schema
-* Persist cleaned data into structured tables
 
 **Database:** `faculty.db`
 
@@ -129,11 +109,11 @@ Sigma-and-Spark/
 
 ### 4. Serving: (The Hand-off)
 
-**Responsibility:**
+REST API endpoint: http://127.0.0.1:8000/faculty
 
-* Show faculty data via REST API
-* JSON for downstream NLP and embedding tasks
-* Returns all faculty records with contact, teaching, and publication data
+Returns JSON with faculty + contact + teaching + publications
+
+Ready for NLP embeddings and semantic search
 
 ---
 
