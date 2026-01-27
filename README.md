@@ -160,7 +160,7 @@ pip install -r requirements.txt
 ```
 
 ---
-## From Reciepie to Ingridents:
+## From Recipe to Ingredients:
 * If you have the ability to add your own touch and want to add some spices, edit code and run individual files.
 
  1. Ingestion
