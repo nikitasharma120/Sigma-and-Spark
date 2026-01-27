@@ -123,7 +123,7 @@ Ready for NLP embeddings and semantic search
 
 ### 5. Analytics: (Statistics)
 
-Total priles + Faculty Type Distribution +Missing Value Summary + Avg. ext length for biography + Specializzation Distribution
+Total profiles + Faculty Type Distribution + Missing Value Summary + Avg. text length for biography + Specialization Distribution
 
 Output:
 
@@ -196,6 +196,7 @@ python "5. Analytics/data_exploration.py"
 * Modular codebase
 * FastAPI ready for NLP
 * Clear documentation and schema
+* Data exploration stats
 ---
 
 
