@@ -95,7 +95,7 @@ def separate_education_and_biography(education: str, biography: str) -> tuple[st
 # -------------------------------------------------------------------
 def transform_record(record: Dict[str, Any]) -> Dict[str, Any]:
     name = clean_string(record.get("name"))
-    faculty_type = clean_optional_string(record.get("faculty_type"))
+    faculty_type = clean_string(record.get("faculty_type"))
     education_raw = clean_string(record.get("education"))
     biography_raw = clean_string(record.get("biography"))
     specialization = clean_string(record.get("specialization"))
@@ -117,7 +117,7 @@ def transform_record(record: Dict[str, Any]) -> Dict[str, Any]:
 
     return {
         "name": name,
-        "faculty":faculty_type
+        "faculty":faculty_type,
         "education": education,
         "biography": biography,
         "specialization": specialization,

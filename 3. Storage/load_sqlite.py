@@ -2,6 +2,9 @@ import sqlite3
 import json
 import os
 
+# --------------------------------------------------
+# PATH CONFIG
+# --------------------------------------------------
 PROJECT_ROOT = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..")
 )
@@ -9,7 +12,9 @@ PROJECT_ROOT = os.path.abspath(
 DATA_FILE = os.path.join(PROJECT_ROOT, "faculty_cleaned.json")
 DB_PATH = os.path.join(PROJECT_ROOT, "3. Storage", "faculty.db")
 
-
+# --------------------------------------------------
+# LOAD DATA
+# --------------------------------------------------
 def load_faculty_data(file_path):
     try:
         with open(file_path, "r", encoding="utf-8") as f:
@@ -21,12 +26,15 @@ def load_faculty_data(file_path):
         print(f"File not found: {file_path}")
         return []
     except json.JSONDecodeError as e:
-        print(f"format error: {e}")
+        print(f"Format error: {e}")
         return []
     except ValueError as e:
         print(f"Data validation error: {e}")
         return []
 
+# --------------------------------------------------
+# SCHEMA CREATION
+# --------------------------------------------------
 def create_schema(conn):
     cursor = conn.cursor()
     try:
@@ -39,6 +47,7 @@ def create_schema(conn):
         CREATE TABLE faculty (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
+            faculty_type TEXT,
             education TEXT,
             biography TEXT,
             specialization TEXT,
@@ -73,20 +82,32 @@ def create_schema(conn):
         print(f"Schema creation error: {e}")
         conn.rollback()
 
+# --------------------------------------------------
+# INSERT DATA
+# --------------------------------------------------
 def insert_faculty_data(conn, cleaned_data):
     cursor = conn.cursor()
     try:
         for entry in cleaned_data:
             cursor.execute("""
-            INSERT INTO faculty (name, education, biography, specialization, profile_url)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO faculty (
+                name,
+                faculty_type,
+                education,
+                biography,
+                specialization,
+                profile_url
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
             """, (
                 entry.get("name"),
+                entry.get("faculty"),          # <-- CORRECT FIELD
                 entry.get("education"),
                 entry.get("biography"),
                 entry.get("specialization"),
                 entry.get("profile_url")
             ))
+
             faculty_id = cursor.lastrowid
 
             contact = entry.get("contact", {})
@@ -101,28 +122,42 @@ def insert_faculty_data(conn, cleaned_data):
             ))
 
             for subject in entry.get("teaching", []):
-                cursor.execute("INSERT INTO teaching (faculty_id, subject) VALUES (?, ?)", (faculty_id, subject))
+                cursor.execute(
+                    "INSERT INTO teaching (faculty_id, subject) VALUES (?, ?)",
+                    (faculty_id, subject)
+                )
 
             for pub in entry.get("publications", []):
-                cursor.execute("INSERT INTO publications (faculty_id, publication) VALUES (?, ?)", (faculty_id, pub))
+                cursor.execute(
+                    "INSERT INTO publications (faculty_id, publication) VALUES (?, ?)",
+                    (faculty_id, pub)
+                )
 
         conn.commit()
     except sqlite3.Error as e:
         print(f"Insert failed: {e}")
         conn.rollback()
 
+# --------------------------------------------------
+# MAIN
+# --------------------------------------------------
 def main():
     cleaned_data = load_faculty_data(DATA_FILE)
+
     if not cleaned_data:
-        print("No data.")
+        print("No data to load.")
         return
+
     try:
         with sqlite3.connect(DB_PATH) as conn:
             create_schema(conn)
             insert_faculty_data(conn, cleaned_data)
-            print("Faculty data stored in db")
+            print("Faculty data stored in database")
     except sqlite3.Error as e:
         print(f"Database connection error: {e}")
 
+# --------------------------------------------------
+# ENTRY POINT
+# --------------------------------------------------
 if __name__ == "__main__":
     main()

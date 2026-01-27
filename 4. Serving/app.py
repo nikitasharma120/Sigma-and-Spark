@@ -47,6 +47,7 @@ def fetch_all_faculty() -> List[Dict]:
             faculty_id = row["id"]
             results.append({"id": faculty_id,
                 "name": row["name"],
+                "faculty_type":row["faculty_type"],
                 "education": row["education"],
                 "biography": row["biography"],
                 "specialization": row["specialization"],
