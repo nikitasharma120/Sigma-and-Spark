@@ -30,6 +30,10 @@ Sigma-and-Spark/
 │   ├── app.py
 │   ├── logs/
 │   │   └── llm_usage.md
+│
+├── 5. Analytics/
+│   ├── data_exploration.py
+│   
 ├── pipeline.py
 ├── requirements.txt
 └── README.md
@@ -117,6 +121,16 @@ Ready for NLP embeddings and semantic search
 
 ---
 
+### 5. Analytics: (Statistics)
+
+Total priles + Faculty Type Distribution +Missing Value Summary + Avg. ext length for biography + Specializzation Distribution
+
+Output:
+
+Data exploration json file.
+
+---
+
 ## How to Run the Pipeline
 
 ### 1. Clone the repository:
@@ -146,7 +160,35 @@ pip install -r requirements.txt
 ```
 
 ---
+## From Reciepie to Ingridents:
+* If you have the ability to add your own touch and want to add some spices, edit code and run individual files.
 
+ 1. Ingestion
+```
+python "1. Ingestion/scraper.py"
+```
+
+2. Transformation
+```
+python "2. Transformation/cleaner.py"
+```
+
+3. Storage
+```
+python "3. Storage/load_sqlite.py"
+```
+
+4. Serving
+```
+python "4. Serving/app.py"
+```
+
+5. Analytics
+```
+python "5. Analytics/data_exploration.py"
+```
+
+---
 ## Outcomes:
 
 * Clean, structured faculty dataset
