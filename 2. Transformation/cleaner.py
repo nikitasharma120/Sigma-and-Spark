@@ -3,9 +3,10 @@ import os
 import re
 from typing import Any, Dict, List
 
-# -------------------------------------------------------------------
-# Path handling (OS-safe, project-relative)
-# -------------------------------------------------------------------
+# --------------------------------------------------
+# PATH CONFIG (PROJECT SAFE)
+# --------------------------------------------------
+
 PROJECT_ROOT = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..")
 )
@@ -13,144 +14,138 @@ PROJECT_ROOT = os.path.abspath(
 INPUT_PATH = os.path.join(PROJECT_ROOT, "faculty_profiles.json")
 OUTPUT_PATH = os.path.join(PROJECT_ROOT, "faculty_cleaned.json")
 
-# -------------------------------------------------------------------
-# Constants
-# -------------------------------------------------------------------
-NA_STRING = "Not Available"
+NA = "Not Available"
 
-# -------------------------------------------------------------------
-# Utility cleaning functions
-# -------------------------------------------------------------------
+# --------------------------------------------------
+# BASIC CLEANERS
+# --------------------------------------------------
+
 def normalize_whitespace(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
-
 
 def strip_html(text: str) -> str:
     return re.sub(r"<[^>]+>", "", text)
 
-
 def clean_string(value: Any) -> str:
     if not value or not isinstance(value, str):
-        return NA_STRING
+        return NA
 
-    cleaned = strip_html(value)
-    cleaned = normalize_whitespace(cleaned)
+    value = strip_html(value)
+    value = normalize_whitespace(value)
 
-    if cleaned in {"", "null", "None", "-", "--"}:
-        return NA_STRING
+    if value.lower() in {"", "none", "null", "-", "--"}:
+        return NA
 
-    return cleaned
+    return value
 
+def clean_address(value: Any) -> str:
+    if not value or not isinstance(value, str):
+        return NA
 
-def clean_address(address: Any) -> str:
-    if not address or not isinstance(address, str):
-        return NA_STRING
+    value = value.replace("#", "")
+    value = strip_html(value)
+    value = normalize_whitespace(value)
 
-    # Remove ONLY '#' symbols
-    address = address.replace("#", "")
-    address = strip_html(address)
-    address = normalize_whitespace(address)
-
-    return address if address else NA_STRING
-
+    return value if value else NA
 
 def clean_list(values: Any) -> List[str]:
     if not isinstance(values, list):
         return []
 
-    cleaned_items = []
-    for item in values:
-        if isinstance(item, str):
-            text = normalize_whitespace(strip_html(item))
-            if text:
-                cleaned_items.append(text)
+    cleaned = []
+    for v in values:
+        if isinstance(v, str):
+            v = normalize_whitespace(strip_html(v))
+            if v:
+                cleaned.append(v)
+    return cleaned
 
-    return cleaned_items
+# --------------------------------------------------
+# PUBLICATIONS CLEANER
+# --------------------------------------------------
 
-
-def separate_education_and_biography(education: str, biography: str) -> tuple[str, str]:
+def clean_publications(pub: Any) -> Dict[str, List[str]]:
     """
-    If education text is polluted with biography-like sentences,
-    split conservatively without inferring new content.
+    Keeps structure:
+    journal / conference / other / external_links
     """
-    if education == NA_STRING:
-        return NA_STRING, biography
-
-    if biography != NA_STRING:
-        return education, biography
-
-    # Heuristic: If education contains long paragraphs, split at first full stop
-    if education.count(".") >= 2:
-        parts = education.split(".", 1)
-        edu = normalize_whitespace(parts[0])
-        bio = normalize_whitespace(parts[1])
-
-        return edu or NA_STRING, bio or NA_STRING
-
-    return education, biography
-
-
-# -------------------------------------------------------------------
-# Record transformation
-# -------------------------------------------------------------------
-def transform_record(record: Dict[str, Any]) -> Dict[str, Any]:
-    name = clean_string(record.get("name"))
-    faculty_type = clean_string(record.get("faculty_type"))
-    education_raw = clean_string(record.get("education"))
-    biography_raw = clean_string(record.get("biography"))
-    specialization = clean_string(record.get("specialization"))
-    profile_url = clean_string(record.get("profile_url"))
-
-    education, biography = separate_education_and_biography(
-        education_raw,
-        biography_raw
-    )
-
-    teaching = clean_list(record.get("teaching"))
-    publications = clean_list(record.get("publications"))
-
-    contact = {
-        "phone": clean_string(record.get("phone")),
-        "email": clean_string(record.get("email")),
-        "address": clean_address(record.get("address"))
+    result = {
+        "journal": [],
+        "conference": [],
+        "other": [],
+        "external_links": []
     }
+
+    if not isinstance(pub, dict):
+        return result
+
+    for key in result.keys():
+        if key in pub:
+            if isinstance(pub[key], list):
+                result[key] = clean_list(pub[key])
+
+    return result
+
+# --------------------------------------------------
+# MAIN TRANSFORM
+# --------------------------------------------------
+
+def transform_record(r: Dict[str, Any]) -> Dict[str, Any]:
 
     return {
-        "name": name,
-        "faculty":faculty_type,
-        "education": education,
-        "biography": biography,
-        "specialization": specialization,
-        "teaching": teaching,
-        "publications": publications,
-        "contact": contact,
-        "profile_url": profile_url
+        "name": clean_string(r.get("name")),
+        "faculty_type": clean_string(r.get("faculty_type")),
+
+        # -------- PROFILE INFO --------
+        "education": clean_string(r.get("education")),
+        "biography": clean_string(r.get("biography")),
+        "specialization": clean_string(r.get("specialization")),
+
+        # -------- ACADEMICS --------
+        "teaching": clean_list(r.get("teaching")),
+        "research": clean_list(r.get("research")),
+        "openings": clean_string(r.get("openings")),
+
+        # -------- PUBLICATIONS --------
+        "publications": clean_publications(r.get("publications")),
+
+        # -------- CONTACT (GROUPED) --------
+        "contact": {
+            "phone": clean_string(r.get("phone")),
+            "email": clean_string(r.get("email")),
+            "address": clean_address(r.get("address")),
+        },
+
+        # -------- META --------
+        "profile_url": clean_string(r.get("profile_url")),
+        "source_listing_url": clean_string(r.get("source_listing_url")),
     }
 
+# --------------------------------------------------
+# DRIVER
+# --------------------------------------------------
 
-# -------------------------------------------------------------------
-# Main execution
-# -------------------------------------------------------------------
 def main():
     if not os.path.exists(INPUT_PATH):
-        raise FileNotFoundError(f"Input file not found: {INPUT_PATH}")
+        raise FileNotFoundError(f"Missing input file: {INPUT_PATH}")
 
     with open(INPUT_PATH, "r", encoding="utf-8") as f:
-        raw_records = json.load(f)
+        raw = json.load(f)
 
-    cleaned_records = []
-    for record in raw_records:
+    cleaned = []
+    for record in raw:
         try:
-            cleaned_records.append(transform_record(record))
+            cleaned.append(transform_record(record))
         except Exception:
-            # Skip only the broken record, never crash the pipeline
+            # pipeline must NEVER crash
             continue
 
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(cleaned_records, f, indent=2, ensure_ascii=False)
+        json.dump(cleaned, f, indent=2, ensure_ascii=False)
 
-    print(f"Cleaned {len(cleaned_records)} records → {OUTPUT_PATH}")
+    print(f" Cleaned {len(cleaned)} records → {OUTPUT_PATH}")
 
+# --------------------------------------------------
 
 if __name__ == "__main__":
     main()
