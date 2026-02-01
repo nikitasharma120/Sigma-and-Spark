@@ -49,7 +49,7 @@ Sigma-and-Spark/
 
 Crawls faculty listing + profile pages
 
-Extracts raw data: name, type, bio, education, specialization, teaching subjects, publications, contact info, profile URL
+Extracts raw data: name, type, bio, education, specialization, teaching subjects, research areas, publications (journals, conferences, others, external links), contact info, profile URL
 
 
 **Error Handling:**
@@ -85,9 +85,11 @@ Ensure lists exist for teaching & publications
 * id (PK)
 * name
 * education
+* faculty_type
 * biography
 * specialization
 * profile_url
+* source_listing_url
 
 **contact**
 
@@ -103,20 +105,41 @@ Ensure lists exist for teaching & publications
 * faculty_id (FK)
 * subject
 
+**research**
+
+* id (PK)
+* faculty_id (FK)
+* topic
+
+**openings**
+* id (PK)
+* faculty_id (FK)
+* description
+
 **publications**
 
 * id (PK)
 * faculty_id (FK)
-* publication
-
+* type (journal / conference / other / external_links)
+* citation
 ---
 
 ### 4. Serving: (The Hand-off)
 
 REST API endpoint: http://127.0.0.1:8000/faculty
 
-Returns JSON with faculty + contact + teaching + publications
+Returns:
+* Faculty core data
 
+* Contact details
+
+* Teaching subjects
+
+* Research topics
+
+* Openings
+
+* Publications (categorized)
 Ready for NLP embeddings and semantic search
 
 ---
