@@ -186,7 +186,7 @@ docker-compose -f docker/docker-compose.yml up --build
 ![UI Input](screenshots/ui_input.png)
 
 ### 4. UI Output
-![UI Output](screenshots/ui_output.png)
+![UI Output](screenshots/ui_ouput.png)
 
 ### 5. UI View
 ![UI View](screenshots/ui_view.png)
