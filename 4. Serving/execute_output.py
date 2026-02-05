@@ -1,17 +1,6 @@
-from fastapi import FastAPI, HTTPException
-import sqlite3
-from typing import List, Dict
 import os
-import subprocess
-
-# --------------------------------------------------
-# APP INIT
-# --------------------------------------------------
-
-app = FastAPI(
-    title="Faculty API",
-    description="Serve structured DA-IICT faculty data"
-)
+import json
+import sqlite3
 
 # --------------------------------------------------
 # PATHS
@@ -27,8 +16,10 @@ DATABASE = os.path.join(
     "faculty.db"
 )
 
-if not os.path.exists(DATABASE):
-    raise RuntimeError(f"Database not found at: {DATABASE}")
+OUTPUT_JSON = os.path.join(
+    PROJECT_ROOT,
+    "faculty_output.json"
+)
 
 # --------------------------------------------------
 # DB CONNECTION
@@ -95,15 +86,18 @@ def get_publications(cur, fid):
     return pubs
 
 # --------------------------------------------------
-# CORE FETCH (API ONLY)
+# CORE LOGIC (JSON GENERATOR)
 # --------------------------------------------------
 
-def fetch_all_faculty():
+def generate_faculty_output():
     conn = get_connection()
     cur = conn.cursor()
 
     cur.execute("SELECT * FROM faculty")
     rows = cur.fetchall()
+
+    if not rows:
+        raise RuntimeError("No faculty data found")
 
     result = []
 
@@ -128,31 +122,12 @@ def fetch_all_faculty():
         })
 
     conn.close()
-    return result
 
-# --------------------------------------------------
-# STARTUP: RUN execute_output.py
-# --------------------------------------------------
+    with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
+        json.dump(result, f, indent=2, ensure_ascii=False)
 
-@app.on_event("startup")
-def run_output_generator():
-    subprocess.run(
-        ["python", "4. Serving/execute_output.py"],
-        check=True
-    )
+    print(f" faculty_output.json generated at: {OUTPUT_JSON}")
 
-# --------------------------------------------------
-# ROUTES
-# --------------------------------------------------
 
-@app.get("/faculty", response_model=List[Dict])
-def get_faculty():
-    data = fetch_all_faculty()
-
-    if not data:
-        raise HTTPException(
-            status_code=404,
-            detail="No faculty data found"
-        )
-
-    return data
+if __name__ == "__main__":
+    generate_faculty_output()

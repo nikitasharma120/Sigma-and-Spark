@@ -1,0 +1,204 @@
+/* ================= BASE ================= */
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: #f6f2e9;          /* BEIGE BACKGROUND */
+    margin: 0;
+    padding: 40px;
+    color: #2f2f2f;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #3b2f2f;
+}
+
+/* ================= SEARCH FORM ================= */
+form {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+input, select {
+    padding: 12px;
+    font-size: 15px;
+    border: 1px solid #cbbfae;
+    border-radius: 6px;
+    min-width: 220px;
+    background: #fffdf9;
+}
+
+button {
+    padding: 12px 22px;
+    font-size: 15px;
+    border: none;
+    background: #7a5c3e;          /* EARTHY BROWN */
+    color: white;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+button:hover {
+    background: #5f452d;
+}
+
+/* ================= GRID ================= */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 28px;
+}
+
+/* ================= CARD ================= */
+.card {
+    background: #fffaf2;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 32px rgba(0,0,0,0.12);
+}
+
+.card img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    background: #e7dfd3;
+}
+
+/* ================= TEXT ================= */
+.name {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #3b2f2f;
+}
+
+.faculty-type {
+    color: #7a5c3e;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.info {
+    font-size: 14px;
+    color: #4b4b4b;
+    margin-bottom: 6px;
+}
+
+/* ================= MODAL ================= */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fffdf8;
+    width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 14px;
+    padding: 30px 35px;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+
+.close {
+    position: absolute;
+    top: 16px;
+    right: 22px;
+    font-size: 26px;
+    cursor: pointer;
+    color: #5f452d;
+}
+
+/* ================= MODAL IMAGE ================= */
+.modal img {
+    width: 220px;
+    border-radius: 10px;
+    float: left;
+    margin-right: 30px;
+    margin-bottom: 20px;
+    background: #e7dfd3;
+}
+
+/* ================= MODAL CONTENT ================= */
+.field {
+    margin-bottom: 12px;
+    clear: both;
+    line-height: 1.55;
+}
+
+.label {
+    font-weight: 600;
+    color: #5f452d;
+}
+
+/* ================= LINKS ================= */
+a {
+    color: #7a5c3e;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ===== MODAL HEADER LAYOUT ===== */
+.modal-header {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.modal-header img {
+    width: 200px;
+    border-radius: 10px;
+}
+
+.header-info h2 {
+    margin: 0 0 10px 0;
+}
+
+.header-meta {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.badge {
+    background: #7a5c3e;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.profile-link {
+    font-weight: 600;
+    color: #7a5c3e;
+    text-decoration: none;
+}
+
+.profile-link:hover {
+    text-decoration: underline;
+}

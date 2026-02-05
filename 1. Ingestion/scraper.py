@@ -96,6 +96,10 @@ def parse_profile_page(
     data = {
         "name": clean(soup.select_one(".field--name-field-faculty-names")),
         "faculty_type": faculty_type,
+
+        # ✅ ADDED FIELD
+        "image_url": None,
+
         "education": clean(soup.select_one(".field--name-field-faculty-name")),
         "phone": clean(soup.select_one(".field--name-field-contact-no")),
         "email": clean(soup.select_one(".field--name-field-email .field__item")),
@@ -116,13 +120,26 @@ def parse_profile_page(
         "scraped_at": datetime.utcnow().isoformat()
     }
 
-    # BIOGRAPHY (Drupal field)
+    # --------------------------------------------------
+    # FACULTY IMAGE (EXACT DRUPAL FIELD)
+    # --------------------------------------------------
+
+    img_el = soup.select_one(
+        ".field--name-field-faculty-image img"
+    )
+    if img_el and img_el.get("src"):
+        data["image_url"] = normalize_url(img_el["src"])
+
+    # --------------------------------------------------
+    # BIOGRAPHY
+    # --------------------------------------------------
+
     bio_el = soup.select_one(".field--name-field-biography")
     if bio_el:
         data["biography"] = clean(bio_el)
 
     # --------------------------------------------------
-    # SECTION WALKER (THE CORE)
+    # SECTION WALKER
     # --------------------------------------------------
 
     for h2 in cover.find_all("h2", class_="rit-titl"):
@@ -133,23 +150,19 @@ def parse_profile_page(
         if not content:
             continue
 
-        # ---------------- SPECIALIZATION ----------------
         if title == "specialization":
             data["specialization"] = clean(content)
 
-        # ---------------- TEACHING ----------------
         elif title == "teaching":
             for li in content.select("li"):
                 txt = clean(li)
                 if txt:
                     data["teaching"].append(txt)
 
-        # ---------------- OPENINGS ----------------
         elif title == "openings":
             txt = clean(content)
             data["openings"] = txt if txt else None
 
-        # ---------------- RESEARCH ----------------
         elif title == "research":
             bullets = [clean(li) for li in content.select("li") if clean(li)]
             if bullets:
@@ -159,16 +172,13 @@ def parse_profile_page(
                 if raw:
                     data["research"] = [raw]
 
-        # ---------------- PUBLICATIONS (ALL CASES) ----------------
         elif title == "publications":
 
-            # 1️⃣ Capture ALL links (not just Google Scholar)
             for a in content.select("a[href]"):
                 href = a.get("href")
                 if href:
                     data["publications"]["external_links"].append(href.strip())
 
-            # 2️⃣ Sectioned lists
             if content.find("h4"):
                 current = None
                 for el in content.children:
@@ -186,8 +196,6 @@ def parse_profile_page(
                             txt = clean(li)
                             if txt:
                                 data["publications"][current].append(txt)
-
-            # 3️⃣ Flat list
             else:
                 for li in content.select("ul li"):
                     txt = clean(li)

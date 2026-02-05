@@ -11,7 +11,7 @@ PROJECT_ROOT = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..")
 )
 
-INPUT_PATH = os.path.join(PROJECT_ROOT, "faculty_output.json")
+INPUT_PATH = os.path.join(PROJECT_ROOT, "faculty_cleaned.json")
 OUTPUT_PATH = os.path.join(PROJECT_ROOT, "data_exploration_stats.json")
 
 NA = "Not Available"

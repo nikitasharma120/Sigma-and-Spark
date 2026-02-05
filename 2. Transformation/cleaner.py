@@ -95,6 +95,7 @@ def transform_record(r: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "name": clean_string(r.get("name")),
         "faculty_type": clean_string(r.get("faculty_type")),
+        "image_url": clean_string(r.get("image_url")),
 
         # -------- PROFILE INFO --------
         "education": clean_string(r.get("education")),

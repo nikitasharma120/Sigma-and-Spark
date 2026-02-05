@@ -43,6 +43,7 @@ def create_schema(conn):
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         faculty_type TEXT,
+        image_url TEXT,
         education TEXT,
         biography TEXT,
         specialization TEXT,
@@ -104,16 +105,18 @@ def insert_data(conn, records):
         INSERT INTO faculty (
             name,
             faculty_type,
+            image_url,
             education,
             biography,
             specialization,
             profile_url,
             source_listing_url
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             r.get("name"),
             r.get("faculty_type"),
+            r.get("image_url"),
             r.get("education"),
             r.get("biography"),
             r.get("specialization"),

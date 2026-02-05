@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: ../              # project root
+      dockerfile: docker/Dockerfile
+      args:
+        SERVICE: API
+    container_name: faculty_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../API:/app/API
+      - ../recommender:/app/recommender
+      - ../embeddings_index:/app/embeddings_index
+      - ../faculty_output.json:/app/data/faculty_output.json   # 🔑 ADD THIS
+    command: uvicorn API.recommender_app:app --host 0.0.0.0 --port 8000 --reload
+
+  ui:
+    build:
+      context: ../              # project root
+      dockerfile: docker/Dockerfile
+      args:
+        SERVICE: ui
+    container_name: faculty_ui
+    ports:
+      - "5000:5000"
+    depends_on:
+      - api
+    volumes:
+      - ../ui:/app/ui
+      - ../recommender:/app/recommender
+      - ../embeddings_index:/app/embeddings_index
+    command: python ui/ui.py

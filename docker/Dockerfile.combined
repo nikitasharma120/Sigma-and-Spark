@@ -1,0 +1,30 @@
+FROM python:3.13-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies if needed (e.g. for build tools)
+# RUN apt-get update && apt-get install -y gcc
+
+# Install API dependencies (root requirements)
+COPY requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install UI dependencies
+COPY ui/requirements.txt ./ui_requirements.txt
+RUN pip install --no-cache-dir -r ui_requirements.txt
+
+# Copy all code
+COPY . .
+
+# Set environment variable so UI knows where API is (localhost)
+ENV API_URL="http://127.0.0.1:8000/recommend"
+ENV FACULTY_DATA_PATH="/app/faculty_output.json"
+
+# Expose the UI port (Railway routes external traffic here)
+EXPOSE 5000
+
+# Start both services:
+# 1. API in background (&)
+# 2. UI in foreground
+CMD ["sh", "-c", "uvicorn API.recommender_app:app --host 127.0.0.1 --port 8000 & python ui/ui.py"]

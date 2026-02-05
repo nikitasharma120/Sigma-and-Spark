@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Faculty Finder</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<h1>Faculty Recommendation System</h1>
+
+<form method="POST">
+    <input type="text" name="query" placeholder="Describe your research interest..." required>
+
+    <select name="faculty_type">
+        <option value="">All Faculty Types</option>
+        <option value="faculty">Faculty</option>
+        <option value="adjunct">Adjunct</option>
+        <option value="international">International</option>
+        <option value="practice">Practice</option>
+    </select>
+
+    <select name="limit">
+        <option value="5">Top 5</option>
+        <option value="10" selected>Top 10</option>
+        <option value="20">Top 20</option>
+        <option value="50">Top 50</option>
+    </select>
+
+    <button type="submit">Search</button>
+</form>
+
+<!-- ================= CARDS ================= -->
+<div class="grid">
+{% for r in results %}
+    <div class="card" onclick="openModal({{ loop.index0 }})">
+
+        <img src="{{ r.image_url or url_for('static', filename='images/default_faculty.png') }}">
+
+        <div class="name">{{ r.name }}</div>
+        <div class="faculty-type">{{ r.faculty_type }}</div>
+
+        <div class="info"><b>Education:</b> {{ r.education }}</div>
+        <div class="info"><b>Email:</b> {{ r.contact.email }}</div>
+        <div class="info"><b>Phone:</b> {{ r.contact.phone }}</div>
+
+    </div>
+{% endfor %}
+</div>
+
+<!-- ================= MODALS ================= -->
+{% for r in results %}
+<div class="modal" id="modal{{ loop.index0 }}">
+  <div class="modal-content">
+
+    <span class="close" onclick="closeModal({{ loop.index0 }})">&times;</span>
+
+    <!-- ===== HEADER ===== -->
+    <div class="modal-header">
+        <img src="{{ r.image_url or url_for('static', filename='images/default_faculty.png') }}">
+
+        <div class="header-info">
+            <h2>{{ r.name }}</h2>
+
+            <div class="header-meta">
+                <span class="badge">{{ r.faculty_type }}</span>
+                <a class="profile-link" href="{{ r.profile_url }}" target="_blank">
+                    Official Profile ↗
+                </a>
+            </div>
+
+            <div class="field">
+                <span class="label">Education:</span>
+                {{ r.education }}
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== BIOGRAPHY ===== -->
+    {% if r.biography %}
+    <div class="field">
+        <span class="label">Biography:</span><br>
+        {{ r.biography }}
+    </div>
+    {% endif %}
+
+    <!-- ===== SPECIALIZATION ===== -->
+    {% if r.specialization %}
+    <div class="field">
+        <span class="label">Specialization:</span>
+        {{ r.specialization }}
+    </div>
+    {% endif %}
+
+    <!-- ===== TEACHING ===== -->
+    {% if r.teaching and r.teaching|length > 0 %}
+    <div class="field">
+        <span class="label">Teaching:</span>
+        <ul>
+            {% for course in r.teaching %}
+            <li>{{ course }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <!-- ===== PUBLICATIONS ===== -->
+    {% if r.publications %}
+        {% if r.publications.journal or r.publications.conference or r.publications.other or r.publications.external_links %}
+        <div class="field">
+            <span class="label">Publications:</span>
+
+            {% if r.publications.journal and r.publications.journal|length > 0 %}
+            <div><b>Journals</b></div>
+            <ul>
+                {% for p in r.publications.journal %}
+                <li>{{ p }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% if r.publications.conference and r.publications.conference|length > 0 %}
+            <div><b>Conferences</b></div>
+            <ul>
+                {% for p in r.publications.conference %}
+                <li>{{ p }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% if r.publications.other and r.publications.other|length > 0 %}
+            <div><b>Other</b></div>
+            <ul>
+                {% for p in r.publications.other %}
+                <li>{{ p }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% if r.publications.external_links and r.publications.external_links|length > 0 %}
+            <div><b>External Links</b></div>
+            <ul>
+                {% for link in r.publications.external_links %}
+                <li>
+                    <a href="{{ link }}" target="_blank">{{ link }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- ===== OPENINGS ===== -->
+    {% if r.openings %}
+    <div class="field">
+        <span class="label">Openings:</span><br>
+        {{ r.openings }}
+    </div>
+    {% endif %}
+
+    <!-- ===== CONTACT ===== -->
+    {% if r.contact %}
+    <div class="field">
+        <span class="label">Contact:</span><br>
+        📧 {{ r.contact.email }}<br>
+        📞 {{ r.contact.phone }}<br>
+        📍 {{ r.contact.address }}
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endfor %}
+
+<script>
+function openModal(i) {
+    document.getElementById("modal" + i).style.display = "flex";
+}
+
+function closeModal(i) {
+    document.getElementById("modal" + i).style.display = "none";
+}
+</script>
+
+</body>
+</html>
