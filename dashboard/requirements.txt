@@ -1,3 +1,6 @@
+pip>=26.0.1
 streamlit==1.31.0
-plotly==5.18.0
-pandas==2.1.4
+rich==14.3.2
+markdown-it-py==4.0.0
+mdurl==0.1.2
+pygments==2.19.2
