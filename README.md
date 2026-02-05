@@ -54,6 +54,7 @@ Sigma-and-Spark/
 ├── pipeline.py
 ├── requirements.txt 
 ├── llm_usage.md
+├── screenshots
 └── README.md
 ```
 
@@ -166,6 +167,30 @@ docker-compose -f docker/docker-compose.yml up --build
 ```
 *   **API**: `http://localhost:8000/docs`
 ---
+## 5. Deployed APP
+
+---
+*  https://deploy-production-c068.up.railway.app/
+
+---
+
+## Screenshots
+
+### 1. API Documentation (Swagger UI)
+![API Docs](screenshots/api_docs.png)
+
+### 2. API Response Example
+![API Response](screenshots/api_response.png)
+
+### 3. UI Input
+![UI Input](screenshots/ui_input.png)
+
+### 4. UI Output
+![UI Output](screenshots/ui_output.png)
+
+### 5. UI View
+![UI View](screenshots/ui_view.png)
+
 
 ## Credits
 Built by **Sigma & Spark**: where B.Sc. Statistics meets Leveled Sparks 
