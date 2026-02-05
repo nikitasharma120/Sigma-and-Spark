@@ -51,7 +51,7 @@ Sigma-and-Spark/
 │   ├── Dockerfile.combined
 │   └── docker-compose.yml
 │
-├── pipeline.py
+├── full_pipeline.py
 ├── requirements.txt 
 ├── llm_usage.md
 ├── screenshots
@@ -142,7 +142,7 @@ REST API endpoint: `http://localhost:8000/faculty`
   
 ### 1. Clone & Install
 ```bash
-git clone https://github.com/<username>/Sigma-and-Spark.git
+git clone https://github.com/<nikitasharma120>/Sigma-and-Spark.git
 cd Sigma-and-Spark
 pip install -r requirements.txt
 ```
