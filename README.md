@@ -137,7 +137,8 @@ REST API endpoint: `http://localhost:8000/faculty`
 ### Prerequisites
 *   Python 3.9+
 *   Git
-
+*   Docker
+  
 ### 1. Clone & Install
 ```bash
 git clone https://github.com/<username>/Sigma-and-Spark.git
@@ -158,12 +159,11 @@ python analytics/data_exploration.py
 
 ---
 
-## 4. Run with Docker
+## 4. Run with Docker [Ensure Docker Desktop is running in background]
 
 ```bash
 docker-compose -f docker/docker-compose.yml up --build
 ```
-*   **UI**: `http://localhost:5000`
 *   **API**: `http://localhost:8000/docs`
 ---
 
