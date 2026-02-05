@@ -4,7 +4,7 @@ services:
   api:
     build:
       context: ../              # project root
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile.combined
       args:
         SERVICE: API
     container_name: faculty_api
@@ -20,7 +20,7 @@ services:
   ui:
     build:
       context: ../              # project root
-      dockerfile: docker/Dockerfile
+      dockerfile: docker/Dockerfile.combined
       args:
         SERVICE: ui
     container_name: faculty_ui
