@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import json
 from pathlib import Path
+import os
 
 # Page configuration
 st.set_page_config(
@@ -12,21 +13,53 @@ st.set_page_config(
     layout="wide"
 )
 
-# Load data
+# Load data with flexible path handling
 @st.cache_data
 def load_data():
-    """Load data from JSON file"""
-    try:
-        with open('data_exploration_stats.json', 'r') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        st.error("❌ Error: 'data_exploration_stats.json' not found. Please make sure the file is in the same directory as this script.")
-        st.stop()
-    except json.JSONDecodeError:
-        st.error("❌ Error: Invalid JSON format in data_exploration_stats.json")
-        st.stop()
+    """Load data from JSON file - checks multiple locations"""
+    
+    # Possible file locations
+    possible_paths = [
+        'data_exploration_stats.json' # Same directory
+    ]
+    
+    # Try each path
+    for path in possible_paths:
+        if os.path.exists(path):
+            try:
+                with open(path, 'r') as f:
+                    data = json.load(f)
+                    st.sidebar.success(f"✅ Loaded data from: {path}")
+                    return data
+            except json.JSONDecodeError:
+                st.error(f"❌ Invalid JSON in {path}")
+                continue
+    
+    # If no file found, show error with helpful info
+    st.error("❌ Error: Could not find data file!")
+    st.info("""
+    **Looking for one of these files:**
+    - data_exploration_stats.json
+    - analytics/data_exploration_output.json
+    
+    **Current directory:** {}
+    
+    **Files found in current directory:**
+    {}
+    """.format(
+        os.getcwd(),
+        "\n".join(os.listdir('.'))
+    ))
+    st.stop()
 
-data = load_data()
+# Try to load data
+try:
+    data = load_data()
+except Exception as e:
+    st.error(f"Error loading data: {str(e)}")
+    st.info(f"Current working directory: {os.getcwd()}")
+    st.info(f"Files in current directory: {os.listdir('.')}")
+    st.stop()
 
 # Title
 st.title("🎓 Faculty Analytics Dashboard")
